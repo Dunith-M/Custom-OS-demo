@@ -1,7 +1,7 @@
 [org 0x00]
 [bits 16]
 
-section code
+section .code
 
 .init:
     mov eax, 0x07c0
@@ -16,21 +16,24 @@ section code
 .clear:
     mov byte [es:eax], 0
     inc eax
-    mov byte [es:eax], 0x30
+    mov byte [es:eax], 0xB0
     inc eax
 
     cmp eax, 2 * 25 * 80
 
     jl .clear
 
-mov eax, text2
+mov eax, .text
+mov ecx, 3 * 2 * 80
+push .end
 call .print
-;call .print
 
 .end:
     jmp $
 
 .print:
+    mov ebx, 0
+.print_main:
     mov dl, byte [eax + ebx]
     
     cmp dl, 0
@@ -42,14 +45,13 @@ call .print
     inc ecx
     inc ecx
     
-    jmp .print
+    jmp .print_main
 
 .print_end:
     ret
 
-text: db 'Hello, World!,', 0
-text1: db 'This is another text', 0
-text2: db 'Vidusahan , Heshani, Malanka, Themiya, Dunith', 0
+.welcome: db 'Welcome to Our Simple OS.', 0
+.text: db 'Vidusahan , Heshani, Malanka, Themiya, Dunith', 0
 
 times 510 - ($ - $$) db 0x00 ; Pads the file with 0s, making the file the right size
 
